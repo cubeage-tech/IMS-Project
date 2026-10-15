@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
 import Sidebar from "../components/common/Sidebar";
@@ -9,16 +10,18 @@ import {
   UsersRound,
   CalendarDays,
   GraduationCap,
+  FolderKanban,
   FileText,
   CheckCircle,
   Trophy,
   BarChart3,
+  Menu,
 } from "lucide-react";
 
 const hrAdminMenu = [
   {
     label: "Overview",
-    path: "/hradmin",
+    path: "/hradmin/dashboard",
     icon: LayoutDashboard,
   },
   {
@@ -40,6 +43,11 @@ const hrAdminMenu = [
     label: "Students",
     path: "/hradmin/students",
     icon: GraduationCap,
+  },
+  {
+    label: "Projects",
+    path: "/hradmin/projects",
+    icon: FolderKanban,
   },
   {
     label: "Document Verification",
@@ -65,20 +73,32 @@ const hrAdminMenu = [
 ];
 
 const HRAdminLayout = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-[#EEF3F8]">
+
+      {/* MOBILE OVERLAY */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
 
       <Sidebar
         role="HR / Admin"
         userName="Priya Sharma"
         menuItems={hrAdminMenu}
+        isOpen={isSidebarOpen}
       />
 
-      <div className="ml-[337px]">
+      <div className="lg:ml-[337px] transition-all duration-300 ease-in-out min-h-screen flex flex-col overflow-x-hidden">
 
         <Navbar
           role="HR / Admin"
           title="Overview"
+          onMenuClick={() => setIsSidebarOpen(true)}
         />
 
         <main className="pt-[90px] p-8">

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
 import Sidebar from "../components/common/Sidebar";
@@ -6,6 +7,7 @@ import Navbar from "../components/navbar/Navbar";
 import {
   LayoutDashboard,
   UsersRound,
+  FolderKanban,
   ClipboardList,
   FileText,
   Star,
@@ -16,7 +18,7 @@ import {
 const mentorMenu = [
   {
     label: "Overview",
-    path: "/mentor",
+    path: "/mentor/dashboard",
     icon: LayoutDashboard,
   },
   {
@@ -25,13 +27,18 @@ const mentorMenu = [
     icon: UsersRound,
   },
   {
+    label: "Projects",
+    path: "/mentor/projects",
+    icon: FolderKanban,
+  },
+  {
     label: "Task Assignment",
-    path: "/mentor/tasks",
+    path: "/mentor/assign-task",
     icon: ClipboardList,
   },
   {
     label: "Daily Reports",
-    path: "/mentor/reports",
+    path: "/mentor/daily-reports",
     icon: FileText,
     badge: 5,
   },
@@ -42,7 +49,7 @@ const mentorMenu = [
   },
   {
     label: "Leave Requests",
-    path: "/mentor/leave",
+    path: "/mentor/leave-approvals",
     icon: CalendarDays,
     badge: 2,
   },
@@ -54,32 +61,40 @@ const mentorMenu = [
 ];
 
 const MentorLayout = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-[#EEF3F8]">
+      {/* MOBILE OVERLAY */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
 
       {/* FIXED SIDEBAR */}
       <Sidebar
         role="Mentor"
         userName="Dr. Arun Patel"
         menuItems={mentorMenu}
+        isOpen={isSidebarOpen}
       />
 
       {/* RIGHT CONTENT */}
-      <div className="ml-[337px]">
-
+      <div className="lg:ml-[337px] transition-all duration-300 ease-in-out min-h-screen flex flex-col overflow-x-hidden">
         {/* FIXED NAVBAR */}
         <Navbar
           role="Mentor"
           title="Overview"
+          onMenuClick={() => setIsSidebarOpen(true)}
         />
 
         {/* PAGE CONTENT */}
         <main className="pt-[88px] p-7">
           <Outlet />
         </main>
-
       </div>
-
     </div>
   );
 };

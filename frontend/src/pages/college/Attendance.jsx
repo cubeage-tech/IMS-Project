@@ -1,177 +1,425 @@
-import React from "react";
+// import React from "react";
+
+// const Attendance = () => {
+//   const students = [
+//     {
+//       id: 1,
+//       name: "Sneha Joshi",
+//       studentId: "CS2021067",
+//       batch: "2025-Q1",
+//       attendance: 98,
+//     },
+//     {
+//       id: 2,
+//       name: "Aditi Verma",
+//       studentId: "CS2021042",
+//       batch: "2025-Q1",
+//       attendance: 94,
+//     },
+//     {
+//       id: 3,
+//       name: "Rohan Gupta",
+//       studentId: "ME2021033",
+//       batch: "2025-Q2",
+//       attendance: 91,
+//     },
+//     {
+//       id: 4,
+//       name: "Simran Kaur",
+//       studentId: "IT2021055",
+//       batch: "2025-Q2",
+//       attendance: 89,
+//     },
+//     {
+//       id: 5,
+//       name: "Vikram Singh",
+//       studentId: "EC2021018",
+//       batch: "2025-Q1",
+//       attendance: 87,
+//     },
+//   ];
+
+//   return (
+//     <div className="min-h-[calc(100vh-84px)] bg-[#f1f5f9] p-4 sm:p-6 lg:p-8">
+
+//       {/* ================= PAGE HEADER ================= */}
+//       <div className="mb-8">
+//         <h1 className="text-xl sm:text-2xl font-semibold text-[#071627]">
+//           Attendance Records
+//         </h1>
+
+//         <p className="mt-1 text-sm sm:text-base text-[#8b9ab0]">
+//           View attendance details for all your students
+//         </p>
+//       </div>
+
+//       {/* ================= STUDENT LIST ================= */}
+//       <div className="space-y-5">
+
+//         {students.map((student) => {
+//           const isLowAttendance = student.attendance < 90;
+
+//           return (
+//             <div
+//               key={student.id}
+//               className="bg-white border border-[#dce3eb] rounded-2xl px-4 sm:px-5 py-5 min-h-[88px] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5"
+//             >
+
+//               {/* ================= STUDENT INFO ================= */}
+//               <div className="flex items-center gap-4 sm:gap-5">
+
+//                 {/* Avatar */}
+//                 <div className="w-12 h-12 rounded-full bg-[#d2f8e8] flex items-center justify-center flex-shrink-0">
+//                   <span className="text-[#008c68] font-semibold text-[16px]">
+//                     {student.name.charAt(0)}
+//                   </span>
+//                 </div>
+
+//                 {/* Name + ID */}
+//                 <div>
+//                   <h2 className="text-[17px] font-medium text-[#071627]">
+//                     {student.name}
+//                   </h2>
+
+//                   <p className="text-[#8b9ab0] text-[15px] mt-0.5">
+//                     {student.studentId}
+//                     <span className="mx-1">·</span>
+//                     {student.batch}
+//                   </p>
+//                 </div>
+
+//               </div>
+
+//               {/* ================= ATTENDANCE ================= */}
+//               <div className="w-full sm:w-[235px]">
+
+//                 {/* Label + Percentage */}
+//                 <div className="flex items-center justify-between mb-1">
+
+//                   <span className="text-[#8797af] text-[15px]">
+//                     Attendance
+//                   </span>
+
+//                   <span
+//                     className={`font-semibold text-[15px] ${
+//                       isLowAttendance
+//                         ? "text-[#e57d00]"
+//                         : "text-[#00b878]"
+//                     }`}
+//                   >
+//                     {student.attendance}%
+//                   </span>
+
+//                 </div>
+
+//                 {/* Progress Bar */}
+//                 <div className="w-full h-[10px] bg-[#edf1f5] rounded-full overflow-hidden">
+
+//                   <div
+//                     className={`h-full rounded-full ${
+//                       isLowAttendance
+//                         ? "bg-[#e57d00]"
+//                         : "bg-[#0dbb8a]"
+//                     }`}
+//                     style={{
+//                       width: `${student.attendance}%`,
+//                     }}
+//                   />
+
+//                 </div>
+
+//               </div>
+
+//             </div>
+//           );
+//         })}
+
+//       </div>
+
+//     </div>
+//   );
+// };
+
+// export default Attendance;
+
+
+
+import React, { useEffect, useState } from "react";
+import coordinatorStudentService from "../../services/coordinator.services";
+
+const statusStyle = {
+  PRESENT: "bg-[#d5f7e9] text-[#008c68]",
+  ABSENT: "bg-red-100 text-red-600",
+  LATE: "bg-amber-100 text-amber-700",
+  HALF_DAY: "bg-[#eef2f6] text-[#61728a]",
+};
+
+const formatStatus = (value) =>
+  value
+    ? value
+        .split("_")
+        .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
+        .join(" ")
+    : "—";
+
+// "2026-09-15" -> "15 Sep 2026" (parsed as local time so the day never shifts)
+const formatDate = (dateStr) => {
+  if (!dateStr) return "—";
+
+  return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+const formatTime = (dateTime) => {
+  if (!dateTime) return "—";
+
+  return new Date(dateTime).toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+const formatHours = (hours) => {
+  if (hours === null || hours === undefined) return "—";
+
+  const h = Math.floor(hours);
+  const m = Math.round((hours - h) * 60);
+
+  return `${h}h ${m}m`;
+};
 
 const Attendance = () => {
-  const attendanceData = [
-    {
-      id: 1,
-      name: "Rahul Patil",
-      internship: "Web Development",
-      totalDays: 30,
-      present: 27,
-      absent: 3,
-      percentage: 90,
-      status: "Good",
-    },
-    {
-      id: 2,
-      name: "Priya Sharma",
-      internship: "Machine Learning",
-      totalDays: 30,
-      present: 25,
-      absent: 5,
-      percentage: 83,
-      status: "Good",
-    },
-    {
-      id: 3,
-      name: "Amit Jadhav",
-      internship: "Full Stack Development",
-      totalDays: 30,
-      present: 20,
-      absent: 10,
-      percentage: 67,
-      status: "Low",
-    },
-  ];
+  const [students, setStudents] = useState([]);
+  const [recordsByStudent, setRecordsByStudent] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [expandedId, setExpandedId] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        const [studentsRes, attendanceRes] = await Promise.all([
+          coordinatorStudentService.getMyCollegeStudents(),
+          coordinatorStudentService.getCollegeAttendance(),
+        ]);
+
+        setStudents(studentsRes.data || []);
+
+        // Group the daily records by student
+        const grouped = {};
+        (attendanceRes.data?.records || []).forEach((record) => {
+          if (!grouped[record.studentId]) grouped[record.studentId] = [];
+          grouped[record.studentId].push(record);
+        });
+        setRecordsByStudent(grouped);
+      } catch (err) {
+        console.error("Load attendance error:", err);
+        setError("Failed to load attendance records");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const toggleExpand = (id) => {
+    setExpandedId((current) => (current === id ? null : id));
+  };
+
+  if (loading) {
+    return <div className="p-6 text-slate-500">Loading attendance...</div>;
+  }
+
+  if (error) {
+    return <div className="p-6 text-red-500">{error}</div>;
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-[calc(100vh-84px)] bg-[#f1f5f9] p-4 sm:p-6 lg:p-8">
 
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">
-          Student Attendance
+      {/* ================= PAGE HEADER ================= */}
+      <div className="mb-8">
+        <h1 className="text-xl sm:text-2xl font-semibold text-[#071627]">
+          Attendance Records
         </h1>
 
-        <p className="text-gray-500 mt-1">
-          Monitor internship attendance of students.
+        <p className="mt-1 text-sm sm:text-base text-[#8b9ab0]">
+          View attendance details for all your students
         </p>
       </div>
 
-      {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+      {/* ================= STUDENT LIST ================= */}
+      <div className="space-y-5">
 
-        <div className="bg-white rounded-xl shadow-sm p-5">
-          <p className="text-gray-500">
-            Total Students
-          </p>
+        {students.length === 0 ? (
+          <div className="bg-white border border-[#dce3eb] rounded-2xl p-10 text-center text-[#8b9ab0]">
+            No students found in your college.
+          </div>
+        ) : (
+          students.map((student) => {
+            const name = `${student.firstName} ${student.lastName || ""}`.trim();
+            const percent = student.attendancePercent;
+            const hasData = percent !== null && percent !== undefined;
+            const isLowAttendance = hasData && percent < 90;
+            const records = recordsByStudent[student.id] || [];
+            const isOpen = expandedId === student.id;
 
-          <h2 className="text-3xl font-bold text-gray-800 mt-2">
-            120
-          </h2>
-        </div>
+            return (
+              <div
+                key={student.id}
+                className="bg-white border border-[#dce3eb] rounded-2xl overflow-hidden"
+              >
 
-        <div className="bg-white rounded-xl shadow-sm p-5">
-          <p className="text-gray-500">
-            Average Attendance
-          </p>
-
-          <h2 className="text-3xl font-bold text-green-600 mt-2">
-            85%
-          </h2>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm p-5">
-          <p className="text-gray-500">
-            Low Attendance
-          </p>
-
-          <h2 className="text-3xl font-bold text-red-500 mt-2">
-            15
-          </h2>
-        </div>
-
-      </div>
-
-      {/* Attendance Table */}
-      <div className="bg-white rounded-xl shadow-sm p-5">
-
-        <div className="flex justify-between items-center mb-5">
-
-          <h2 className="text-lg font-semibold text-gray-800">
-            Attendance Records
-          </h2>
-
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-            Export Report
-          </button>
-
-        </div>
-
-        <div className="overflow-x-auto">
-
-          <table className="w-full text-left">
-
-            <thead>
-              <tr className="border-b bg-gray-50">
-
-                <th className="p-3">Student</th>
-                <th className="p-3">Internship</th>
-                <th className="p-3">Total Days</th>
-                <th className="p-3">Present</th>
-                <th className="p-3">Absent</th>
-                <th className="p-3">Attendance</th>
-                <th className="p-3">Status</th>
-
-              </tr>
-            </thead>
-
-            <tbody>
-
-              {attendanceData.map((student) => (
-
-                <tr
-                  key={student.id}
-                  className="border-b hover:bg-gray-50"
+                {/* ================= SUMMARY ROW (click to expand) ================= */}
+                <button
+                  type="button"
+                  onClick={() => toggleExpand(student.id)}
+                  className="w-full text-left px-4 sm:px-5 py-5 min-h-[88px] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 hover:bg-[#fafcfd] transition"
                 >
 
-                  <td className="p-3 font-medium">
-                    {student.name}
-                  </td>
+                  {/* Student info */}
+                  <div className="flex items-center gap-4 sm:gap-5">
 
-                  <td className="p-3">
-                    {student.internship}
-                  </td>
+                    <div className="w-12 h-12 rounded-full bg-[#d2f8e8] flex items-center justify-center flex-shrink-0">
+                      <span className="text-[#008c68] font-semibold text-[16px]">
+                        {name.charAt(0)}
+                      </span>
+                    </div>
 
-                  <td className="p-3">
-                    {student.totalDays}
-                  </td>
+                    <div>
+                      <h2 className="text-[17px] font-medium text-[#071627]">
+                        {name}
+                      </h2>
 
-                  <td className="p-3 text-green-600">
-                    {student.present}
-                  </td>
+                      <p className="text-[#8b9ab0] text-[15px] mt-0.5">
+                        {student.enrollmentNumber}
+                        {student.batchName && (
+                          <>
+                            <span className="mx-1">·</span>
+                            {student.batchName}
+                          </>
+                        )}
+                      </p>
+                    </div>
 
-                  <td className="p-3 text-red-500">
-                    {student.absent}
-                  </td>
+                  </div>
 
-                  <td className="p-3 font-semibold">
-                    {student.percentage}%
-                  </td>
+                  {/* Attendance percentage */}
+                  <div className="w-full sm:w-[235px]">
 
-                  <td className="p-3">
+                    <div className="flex items-center justify-between mb-1">
 
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        student.percentage >= 75
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {student.status}
-                    </span>
+                      <span className="text-[#8797af] text-[15px]">
+                        Attendance
+                      </span>
 
-                  </td>
+                      <span
+                        className={`font-semibold text-[15px] ${
+                          !hasData
+                            ? "text-[#b6c1d1]"
+                            : isLowAttendance
+                            ? "text-[#e57d00]"
+                            : "text-[#00b878]"
+                        }`}
+                      >
+                        {hasData ? `${percent}%` : "—"}
+                      </span>
 
-                </tr>
+                    </div>
 
-              ))}
+                    <div className="w-full h-[10px] bg-[#edf1f5] rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${
+                          isLowAttendance ? "bg-[#e57d00]" : "bg-[#0dbb8a]"
+                        }`}
+                        style={{ width: `${hasData ? percent : 0}%` }}
+                      />
+                    </div>
 
-            </tbody>
+                    <p className="text-[12px] text-[#8b9ab0] mt-1.5">
+                      {records.length} {records.length === 1 ? "record" : "records"}
+                      {" · "}
+                      {isOpen ? "Hide details" : "View details"}
+                    </p>
 
-          </table>
+                  </div>
 
-        </div>
+                </button>
+
+                {/* ================= DAILY RECORDS ================= */}
+                {isOpen && (
+                  <div className="border-t border-[#e5eaf0] bg-[#fbfcfd] px-4 sm:px-5 py-4">
+
+                    {records.length === 0 ? (
+                      <p className="text-[#8b9ab0] text-sm py-2">
+                        No attendance marked yet.
+                      </p>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="w-full min-w-[520px]">
+
+                          <thead>
+                            <tr className="border-b border-[#dce3eb]">
+                              {["DATE", "CHECK IN", "CHECK OUT", "HOURS", "STATUS"].map((h) => (
+                                <th
+                                  key={h}
+                                  className="text-left py-2 pr-4 text-[#8292aa] text-xs font-semibold tracking-wider"
+                                >
+                                  {h}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            {records.map((r) => (
+                              <tr
+                                key={r.id}
+                                className="border-b border-[#e5eaf0] last:border-b-0"
+                              >
+                                <td className="py-2.5 pr-4 text-sm text-[#071627]">
+                                  {formatDate(r.date)}
+                                </td>
+                                <td className="py-2.5 pr-4 text-sm font-mono text-[#60738d]">
+                                  {formatTime(r.checkInTime)}
+                                </td>
+                                <td className="py-2.5 pr-4 text-sm font-mono text-[#60738d]">
+                                  {formatTime(r.checkOutTime)}
+                                </td>
+                                <td className="py-2.5 pr-4 text-sm text-[#60738d]">
+                                  {formatHours(r.workingHours)}
+                                </td>
+                                <td className="py-2.5 pr-4">
+                                  <span
+                                    className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-mono ${
+                                      statusStyle[r.status] ||
+                                      "bg-[#eef2f6] text-[#61728a]"
+                                    }`}
+                                  >
+                                    {formatStatus(r.status)}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+
+                        </table>
+                      </div>
+                    )}
+
+                  </div>
+                )}
+
+              </div>
+            );
+          })
+        )}
 
       </div>
 

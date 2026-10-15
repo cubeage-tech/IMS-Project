@@ -1,0 +1,192 @@
+import express from "express";
+
+import authMiddleware from "../../middleware/auth.middleware.js";
+import roleMiddleware from "../../middleware/role.middleware.js";
+import validationMiddleware from "../../middleware/validation.middleware.js";
+
+import {
+  createStudentValidation,
+  updateStudentValidation,
+} from "../../validations/student.validation.js";
+
+import {
+  createStudent,
+  getAllStudents,
+  getStudentById,
+  updateStudent,
+  deleteStudent,
+} from "../../controllers/hr/student.controller.js";
+
+import {
+  createCollege,
+  getAllColleges,
+  getCollegeById,
+  updateCollege,
+  deleteCollege,
+} from "../../controllers/hr/college.controller.js";
+
+
+
+import {
+  createBatch,
+  getAllBatches,
+  getBatchById,
+  updateBatch,
+  deleteBatch,
+  assignStudent,
+} from "../../controllers/hr/batch.controller.js";
+
+
+import {
+  createInternship,
+  getAllInternships,
+  getInternshipById,
+  updateInternship,
+  deleteInternship,
+} from "../../controllers/hr/internship.controller.js";
+
+import {
+  createAssignment,
+  getAllAssignments,
+  getAssignmentById,
+  updateAssignment,
+  deleteAssignment,
+} from "../../controllers/hr/assignment.controller.js";
+
+import {
+  createMentor,
+  getAllMentors,
+  getMentorById,
+  updateMentor,
+  assignStudentToMentor,
+} from "../../controllers/hr/mentor.controller.js";
+
+import * as documentController from "../../controllers/hr/document.controller.js";
+
+import {
+  createProject,
+  getAllProjects,
+  getProjectById,
+  updateProject,
+  deleteProject,
+  assignToProject,
+  unassignFromProject,
+} from "../../controllers/hr/project.controller.js";
+
+import {
+  createProjectValidation,
+  updateProjectValidation,
+  assignProjectValidation,
+} from "../../validations/project.validation.js";
+
+import certificateController from "../../controllers/hr/certificate.controller.js";
+import upload from "../../config/multer.js";
+
+
+
+const router = express.Router();
+
+// HR/Admin authentication and authorization
+router.use(authMiddleware);
+router.use(roleMiddleware("HR_ADMIN","SUPER_ADMIN"));
+
+// =========================
+// COLLEGE ROUTES
+// =========================
+
+router.post("/colleges", createCollege);
+router.get("/colleges", getAllColleges);
+router.get("/colleges/:id", getCollegeById);
+router.put("/colleges/:id", updateCollege);
+router.delete("/colleges/:id", deleteCollege);
+
+
+// =========================
+// BATCH ROUTES
+// =========================
+
+
+router.post("/batches", createBatch);
+router.get("/batches", getAllBatches);
+router.get("/batches/:id", getBatchById);
+router.put("/batches/:id", updateBatch);
+router.delete("/batches/:id", deleteBatch);
+router.post("/batches/assign-student", assignStudent);
+
+// =========================
+// STUDENT ROUTES
+// =========================
+
+router.post(
+  "/students",
+  validationMiddleware(createStudentValidation),
+  createStudent
+);
+
+router.get("/students", getAllStudents);
+
+router.get("/students/:id", getStudentById);
+
+// =========================
+// INTERNSHIP MANAGEMENT
+// =========================
+
+router.post("/internships", createInternship);
+router.get("/internships", getAllInternships);
+router.get("/internships/:id", getInternshipById)
+router.put("/internships/:id", updateInternship);
+router.delete("/internships/:id", deleteInternship);
+
+// =========================
+// ASSIGNMENT MANAGEMENT
+// =========================
+
+router.post("/assignments", createAssignment);
+router.get("/assignments", getAllAssignments);
+router.get("/assignments/:id", getAssignmentById);
+router.put("/assignments/:id", updateAssignment);
+router.delete("/assignments/:id", deleteAssignment);
+
+// =========================
+// MENTOR ROUTES
+// =========================
+
+router.post("/mentors", createMentor);
+router.get("/mentors", getAllMentors);
+router.get("/mentors/:id", getMentorById);
+router.put("/mentors/:id", updateMentor);
+router.put(
+  "/students/:id",
+  validationMiddleware(updateStudentValidation),
+  updateStudent
+);
+router.delete("/students/:id", deleteStudent);
+router.post("/mentors/assign-student", assignStudentToMentor);
+
+// cetificate routes
+router.get("/certificates", certificateController.getAllCertificates);
+router.get("/certificates/:certificateId/download", certificateController.downloadCertificate);
+router.post("/certificates/upload", upload.single("certificateFile"), certificateController.uploadCertificate);
+
+
+// =========================
+// PROJECT ROUTES
+// =========================
+
+router.post("/projects/assign", validationMiddleware(assignProjectValidation), assignToProject);
+router.post("/projects/unassign", validationMiddleware(assignProjectValidation), unassignFromProject);
+
+router.post("/projects", validationMiddleware(createProjectValidation), createProject);
+router.get("/projects", getAllProjects);
+router.get("/projects/:id", getProjectById);
+router.put("/projects/:id", validationMiddleware(updateProjectValidation), updateProject);
+router.delete("/projects/:id", deleteProject);
+
+router.get("/documents/stats", documentController.getDocumentStats);
+router.get("/documents", documentController.getDocuments);
+router.patch(
+  "/documents/:id/review",
+  documentController.reviewStudentDocument
+);
+
+export default router;

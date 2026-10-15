@@ -23,7 +23,6 @@ import SystemAnalytics from "../pages/superadmin/SystemAnalytics";
 import ActivityLog from "../pages/superadmin/activitylog";
 import SystemSettings from "../pages/superadmin/systemsettings";
 
-
 import HRAdminDashboard from "../pages/hradmin/Dashboard";
 import CollegeDashboard from "../pages/college/Dashboard";
 import NominatedStudents from "../pages/college/NominatedStudents";
@@ -39,18 +38,31 @@ import ApplyLeave from "../pages/student/ApplyLeave";
 import MyPerformance from "../pages/student/MyPerformance";
 import Certificate from "../pages/student/Certificate";
 import FeedbackForm from "../pages/student/FeedbackForm";
+import StudentProjects from "../pages/student/Projects";
+
 import MentorDashboard from "../pages/mentor/Dashboard";
+import MyStudents from "../pages/mentor/MyStudents";
+import MentorProjects from "../pages/mentor/Projects";
+import AssignTask from "../pages/mentor/AssignTask";
+import LeaveApprovals from "../pages/mentor/LeaveApprovals";
+import MentorFeedbackForm from "../pages/mentor/FeedbackForm";
+import ReviewDailyReports from "../pages/mentor/ReviewDailyReports";
+import PerformanceEvaluation from "../pages/mentor/PerformanceEvaluation";
+
 import Attendance from "../pages/college/Attendance";
 import CollegeCertificates from "../pages/college/Certificates";
 import UploadStudentList from "../pages/college/UploadStudentList";
+
 import Colleges from "../pages/hradmin/Colleges";
 import Mentors from "../pages/hradmin/Mentors";
 import Batches from "../pages/hradmin/Batches";
 import Students from "../pages/hradmin/Students";
+import Projects from "../pages/hradmin/Projects";
 import DocumentVerification from "../pages/hradmin/DocumentVerification";
 import AttendanceOverview from "../pages/hradmin/AttendanceOverview";
-import HRAdminCertificates from "../pages/hradmin/Certificates";
-import HRAdminReports from "../pages/hradmin/Reports";
+import HRCertificates from "../pages/hradmin/Certificates";
+import HRReports from "../pages/hradmin/Reports";
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -84,30 +96,31 @@ const AppRoutes = () => {
           path={ROUTES.SUPER_ADMIN.DASHBOARD}
           element={<SuperAdminDashboard />}
         />
-       <Route
-         path="/superadmin/hr-admins"
-         element={<ManageHRAdmins />}
-       />
 
-      <Route
-        path="/superadmin/roles"
-        element={<RolesPermissions />}
-      />
+        <Route
+          path="/superadmin/hr-admins"
+          element={<ManageHRAdmins />}
+        />
 
-      <Route
-        path="/superadmin/analytics"
-        element={<SystemAnalytics />}
-      />
+        <Route
+          path="/superadmin/roles"
+          element={<RolesPermissions />}
+        />
 
-      <Route
-        path="/superadmin/activity"
-        element={<ActivityLog />}
-      />
+        <Route
+          path="/superadmin/analytics"
+          element={<SystemAnalytics />}
+        />
 
-      <Route
-        path="/superadmin/settings"
-        element={<SystemSettings />}
-      />
+        <Route
+          path="/superadmin/activity"
+          element={<ActivityLog />}
+        />
+
+        <Route
+          path="/superadmin/settings"
+          element={<SystemSettings />}
+        />
       </Route>
 
       {/* ================= HR ADMIN ================= */}
@@ -116,147 +129,208 @@ const AppRoutes = () => {
           path={ROUTES.HR_ADMIN.DASHBOARD}
           element={<HRAdminDashboard />}
         />
+
         <Route
           path={ROUTES.HR_ADMIN.COLLEGES}
-          element={<Colleges/>}
+          element={<Colleges />}
         />
+
         <Route
           path={ROUTES.HR_ADMIN.MENTORS}
-          element={<Mentors/>}
+          element={<Mentors />}
         />
+
         <Route
           path={ROUTES.HR_ADMIN.BATCHES}
-          element={<Batches/>}
+          element={<Batches />}
         />
+
         <Route
           path={ROUTES.HR_ADMIN.STUDENTS}
-          element={<Students/>}
+          element={<Students />}
         />
+
+        <Route
+          path="/hradmin/projects"
+          element={<Projects />}
+        />
+
         <Route
           path={ROUTES.HR_ADMIN.DOCUMENT_VERIFICATION}
-          element={<DocumentVerification/>}
+          element={<DocumentVerification />}
         />
+
         <Route
           path={ROUTES.HR_ADMIN.ATTENDANCE}
-          element={<AttendanceOverview/>}
+          element={<AttendanceOverview />}
         />
+
         <Route
           path={ROUTES.HR_ADMIN.CERTIFICATES}
-          element={<HRAdminCertificates/>}
+          element={<HRCertificates />}
         />
+
         <Route
           path={ROUTES.HR_ADMIN.REPORTS}
-          element={<HRAdminReports/>}
+          element={<HRReports />}
         />
       </Route>
-      
 
       {/* ================= COLLEGE COORDINATOR ================= */}
-      
+
       <Route element={<CollegeCoordinatorLayout />}>
 
-       {/* Dashboard */}
+        {/* Dashboard */}
         <Route
-        path={ROUTES.COLLEGE.DASHBOARD}
-       element={<CollegeDashboard />}
-      />
+          path={ROUTES.COLLEGE.DASHBOARD}
+          element={<CollegeDashboard />}
+        />
 
-     {/* Student List */}
-      <Route
-    path={ROUTES.COLLEGE.STUDENTS}
-    element={<NominatedStudents />}
-    />
+        {/* Student List */}
+        <Route
+          path={ROUTES.COLLEGE.STUDENTS}
+          element={<NominatedStudents />}
+        />
 
-    {/* Attendance - temporary */}
-      <Route
-    path={ROUTES.COLLEGE.ATTENDANCE}
-    element={<Attendance />}
-    />
+        {/* Attendance - temporary */}
+        <Route
+          path={ROUTES.COLLEGE.ATTENDANCE}
+          element={<Attendance />}
+        />
 
-    {/* Student Progress */}
-     <Route
-    path={ROUTES.COLLEGE.PROGRESS}
-    element={<ProgressTracking />}
-   />
+        {/* Student Progress */}
+        <Route
+          path={ROUTES.COLLEGE.PROGRESS}
+          element={<ProgressTracking />}
+        />
 
-   {/* Reports */}
-    <Route
-    path={ROUTES.COLLEGE.REPORTS}
-    element={<CollegeReports />}
-   />
+        {/* Reports */}
+        <Route
+          path={ROUTES.COLLEGE.REPORTS}
+          element={<CollegeReports />}
+        />
 
-    {/* Certificates - temporary */}
-    <Route
-    path={ROUTES.COLLEGE.CERTIFICATES}
-    element={<CollegeCertificates />}
-   />
+        {/* Certificates - temporary */}
+        <Route
+          path={ROUTES.COLLEGE.CERTIFICATES}
+          element={<CollegeCertificates />}
+        />
 
-    {/* Upload Student List - temporary */}
-    <Route
-    path={ROUTES.COLLEGE.UPLOAD_STUDENT_LIST}
-    element={<UploadStudentList />}
-   />
+        {/* Upload Student List - temporary */}
+        <Route
+          path={ROUTES.COLLEGE.UPLOAD_STUDENT_LIST}
+          element={<UploadStudentList />}
+        />
 
-   </Route>
-  
+      </Route>
 
       {/* ================= STUDENT / INTERN ================= */}
       <Route element={<StudentLayout />}>
+
         <Route
           path={ROUTES.STUDENT.DASHBOARD}
           element={<StudentDashboard />}
         />
+
         <Route
           path={ROUTES.STUDENT.PROFILE}
           element={<Profile />}
         />
+
+        <Route
+          path="/student/projects"
+          element={<StudentProjects />}
+        />
+
         <Route
           path={ROUTES.STUDENT.DOCUMENTS}
           element={<DocumentUpload />}
         />
+
         <Route
           path={ROUTES.STUDENT.ATTENDANCE}
           element={<MarkAttendance />}
         />
+
         <Route
           path={ROUTES.STUDENT.TASKS}
           element={<MyTasks />}
         />
+
         <Route
           path={ROUTES.STUDENT.DAILY_REPORT}
           element={<DailyReportSubmit />}
         />
+
         <Route
           path={ROUTES.STUDENT.LEAVE}
           element={<ApplyLeave />}
         />
+
         <Route
           path={ROUTES.STUDENT.PERFORMANCE}
           element={<MyPerformance />}
         />
+
         <Route
           path={ROUTES.STUDENT.CERTIFICATE}
           element={<Certificate />}
         />
+
         <Route
           path={ROUTES.STUDENT.FEEDBACK}
           element={<FeedbackForm />}
         />
+
       </Route>
-      
 
       {/* ================= MENTOR ================= */}
       <Route element={<MentorLayout />}>
+
         <Route
           path={ROUTES.MENTOR.DASHBOARD}
           element={<MentorDashboard />}
         />
+
+        <Route
+          path={ROUTES.MENTOR.MYSTUDENTS}
+          element={<MyStudents />}
+        />
+
+        <Route
+          path="/mentor/projects"
+          element={<MentorProjects />}
+        />
+
+        <Route
+          path={ROUTES.MENTOR.ASSIGNTASK}
+          element={<AssignTask />}
+        />
+
+        <Route
+          path={ROUTES.MENTOR.REVIEWDAILYREPORTS}
+          element={<ReviewDailyReports />}
+        />
+
+        <Route
+          path={ROUTES.MENTOR.LEAVEAPPROVALS}
+          element={<LeaveApprovals />}
+        />
+
+        <Route
+          path={ROUTES.MENTOR.PERFORMANCEEVALUATIONS}
+          element={<PerformanceEvaluation />}
+        />
+
+        <Route
+          path={ROUTES.MENTOR.FEEDBACKFORM}
+          element={<MentorFeedbackForm />}
+        />
+
       </Route>
 
     </Routes>
   );
 };
-
-
 
 export default AppRoutes;

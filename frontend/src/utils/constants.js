@@ -1,3 +1,4 @@
+// from student dashboard to mentor dashboard, the student can view their profile, tasks, leave requests, and certificates. The mentor can manage their students, review tasks and leave requests, and provide evaluations. The HR admin can manage mentors and students, as well as handle certificates. Each role has specific endpoints to interact with the backend services
 export const roleConfig = {
   'super-admin':         { label: 'Super Admin',         abbr: 'SA', color: '#22c55e' },
   'hr-admin':            { label: 'HR / Admin',          abbr: 'HR', color: '#3b82f6' },
@@ -5,3 +6,115 @@ export const roleConfig = {
   'mentor':              { label: 'Mentor',              abbr: 'ME', color: '#ef4444' },
   'student-intern':      { label: 'Student / Intern',    abbr: 'IN', color: '#8b5cf6' },
 }
+export const roleRouteMap = {
+  SUPER_ADMIN: 'superadmin',
+  HR_ADMIN: 'hradmin',
+  COLLEGE_COORDINATOR: 'college',
+  MENTOR: 'mentor',
+  STUDENT: 'student',
+};
+
+export const BASE_URL = import.meta.env.VITE_API_URL;
+
+export const API_ENDPOINTS = {
+  AUTH: {
+    LOGIN: "/auth/login",
+    REGISTER: "/auth/register",
+    ME: "/auth/me",
+  },
+  MENTOR: {
+    STUDENTS: "/mentor/students",
+    STUDENT_BY_ID: (id) => `/mentor/students/${id}`,
+    TASKS: "/mentor/tasks",
+    TASK_BY_ID: (id) => `/mentor/tasks/${id}`,
+    TASK_REVIEW: (id) => `/mentor/tasks/${id}/review`,
+    LEAVES: "/mentor/leaves",
+    LEAVE_BY_ID: (id) => `/mentor/leaves/${id}`,
+    LEAVE_REVIEW: (id) => `/mentor/leaves/${id}/review`,
+    EVALUATIONS: "/mentor/evaluations",
+    EVALUATION_BY_ID: (id) => `/mentor/evaluations/${id}`,
+    CERTIFICATES: "/mentor/certificates",
+    PROJECTS: "/mentor/projects" ,
+  },
+  HR: {
+    // Colleges
+    COLLEGES: "/hr/colleges",
+    COLLEGE_BY_ID: (id) => `/hr/colleges/${id}`,
+
+    // Batches
+    BATCHES: "/hr/batches",
+    BATCH_BY_ID: (id) => `/hr/batches/${id}`,
+    BATCH_ASSIGN_STUDENT: "/hr/batches/assign-student",
+
+    // Students
+    STUDENTS: "/hr/students",
+    STUDENT_BY_ID: (id) => `/hr/students/${id}`,
+
+    // Mentors
+    MENTORS: "/hr/mentors",
+    MENTOR_BY_ID: (id) => `/hr/mentors/${id}`,
+
+    // Certificates
+    CERTIFICATES: "/hr/certificates",
+    CERTIFICATE_UPLOAD: "/hr/certificates/upload",
+    CERTIFICATE_DOWNLOAD: (id) => `/hr/certificates/${id}/download`,
+
+    // Student Document Verification
+    DOCUMENTS: "/hr/documents",
+    DOCUMENT_STATS: "/hr/documents/stats",
+    DOCUMENT_REVIEW: (id) => `/hr/documents/${id}/review`,
+
+    MENTOR_ASSIGN_STUDENT: "/hr/mentors/assign-student",
+    
+    PROJECTS: "/hr/projects",
+    PROJECT_BY_ID: (id) => `/hr/projects/${id}`,
+    PROJECT_ASSIGN: "/hr/projects/assign",
+    PROJECT_UNASSIGN: "/hr/projects/unassign",
+  },
+  STUDENT: {
+    PROFILE: "/student/profile",
+     
+    // Student Document Upload & Status
+    DOCUMENTS: "/student/documents",
+    DOCUMENT_UPLOAD: "/student/documents",
+
+    TASKS: "/student/tasks",
+    TASK_BY_ID: (id) => `/student/tasks/${id}`,
+    TASK_START: (id) => `/student/tasks/${id}/start`,
+    TASK_SUBMIT: (id) => `/student/tasks/${id}/submit`,
+
+    LEAVE: "/student/leave",
+    LEAVE_BY_ID: (id) => `/student/leave/${id}`,
+    LEAVE_CANCEL: (id) => `/student/leave/${id}/cancel`,
+
+    ATTENDANCE_CHECKIN: "/student/attendance/check-in",
+    ATTENDANCE_CHECKOUT: "/student/attendance/check-out",
+    ATTENDANCE: "/student/attendance",
+
+    EVALUATIONS: "/student/evaluations",
+    EVALUATION_LATEST: "/student/evaluations/latest",
+
+    CERTIFICATES: "/student/certificates",
+    CERTIFICATE_DOWNLOAD: (id) => `/student/certificates/${id}/download`,
+
+    PROJECTS: "/student/projects",
+  },
+SUPER_ADMIN: {
+  USERS: "/super-admin/users",
+  USER_BY_ID: (id) => `/super-admin/users/${id}`,
+  USER_STATUS: (id) => `/super-admin/users/${id}/status`,
+
+  ROLES: "/super-admin/roles",
+  ROLE_BY_ID: (id) => `/super-admin/roles/${id}`,
+
+  DASHBOARD: "/super-admin/dashboard",
+  HEALTH: "/super-admin/health",
+  SETTINGS: "/super-admin/settings",
+},
+COORDINATOR: {
+  STUDENTS: "/coordinator/students",
+  STUDENT_BY_ID: (id) => `/coordinator/students/${id}`,
+  ATTENDANCE: "/coordinator/attendance",
+  STUDENTS_BULK_UPLOAD: "/coordinator/students/bulk-upload",
+},
+};
